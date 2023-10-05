@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "Sk+J5LszTuJs/vITDhO3wP8gDy3vlMcrHqTntpPiYjg=",
+  "Source": "sending-email",
+  "BasePath": "_content/sending-email",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
