@@ -1,11 +1,9 @@
-using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Mvc;
-using MimeKit;
-using MimeKit.Text;
+using SendingEmail.App.Services;
 
 namespace SendingMail.App.Controllers;
 
-public class MailDto
+public class MailRequest
 {
     public string Email { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
@@ -15,23 +13,21 @@ public class MailDto
 [Route("api/mails")]
 public class MailController: ControllerBase
 {
-    [HttpPost()]
-    public IActionResult SendMail([FromBody] MailDto mailDto)
+    private readonly IMailService _mailService;
+
+    public MailController(IMailService mailService)
     {
-        // Definir le mail
-        var email = new MimeMessage();
-        email.From.Add(MailboxAddress.Parse("no-reply@ivoiredevacademy.com"));
-        email.To.Add(MailboxAddress.Parse(mailDto.Email));
-        email.Subject = "Test Email";
-        email.Body = new TextPart(TextFormat.Html) { Text = mailDto.Content };
+        _mailService = mailService;
+    }
 
-        // Envoyer le mail
-        using var smtpClient = new SmtpClient();
-        smtpClient.Connect("localhost", 1025, MailKit.Security.SecureSocketOptions.None);
-        //smtpClient.Authenticate("", "");
-
-        smtpClient.Send(email);
-        smtpClient.Disconnect(true);
+    [HttpPost()]
+    public IActionResult SendMail([FromBody] MailRequest mailRequest)
+    { 
+        _mailService.SendMail(new Mailer() {
+            Content = mailRequest.Content,
+            Subject = "Test avec un service",
+            To = mailRequest.Email
+        });
 
         return Ok(new
         {
