@@ -22,10 +22,14 @@ public class MailController: ControllerBase
 
     [HttpPost()]
     public IActionResult SendMail([FromBody] MailDto mailDto)
-    { 
+    {
         _mailService.SendMail(new Mailer() {
-            Content = mailDto.Content,
-            Subject = "Test avec un service",
+            Template = "mail.template.html",
+            TemplateVariables = new Dictionary<string, string>
+            {
+                { "email", "no-reply@ivoiredevacedemy.com" }
+            },
+            Subject = "Test avec un template",
             To = mailDto.Email
         });
 

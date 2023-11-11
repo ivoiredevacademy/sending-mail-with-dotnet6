@@ -9,7 +9,11 @@ public class Mailer
 {
     public string Subject { get; init; } = string.Empty;
     public string To { get; init; } = string.Empty;
-    public string Content { get; init; } = string.Empty;
+    public string? Content { get; init; } = null!;
+
+    public string? Template { get; init; } = null!;
+
+    public Dictionary<string, string> TemplateVariables = new Dictionary<string, string>();
 }
 
 
@@ -38,8 +42,33 @@ public class MailService : IMailService
         email.From.Add(MailboxAddress.Parse(_mailConfig.FromAdress));
         email.To.Add(MailboxAddress.Parse(mailer.To));
         email.Subject = mailer.Subject;
-        email.Body = new TextPart(TextFormat.Html) { Text = mailer.Content };
+        email.Body = new TextPart(TextFormat.Html) { Text = GetContent(mailer) };
 
         return email;
+    }
+
+    private static string GetContent(Mailer mailer)
+    {
+        if (mailer.Content is null && mailer.Template is null)
+        {
+            throw new Exception("Mailer does not have content");
+        }
+        
+        if (mailer.Content is not null)
+        {
+            return mailer.Content;
+        }
+
+        var templateFullPath = Path.Combine("wwwroot/mails", mailer.Template ?? "");
+        var streamReader = new StreamReader(templateFullPath);
+        var templateContent = streamReader.ReadToEnd();
+        streamReader.Close();
+
+        foreach (var entry  in mailer.TemplateVariables)
+        {
+            templateContent = templateContent.Replace("{" + entry.Key + "}", entry.Value);
+        }
+
+        return templateContent;
     }
 }
