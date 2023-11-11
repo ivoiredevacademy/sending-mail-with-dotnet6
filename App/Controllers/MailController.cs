@@ -3,10 +3,10 @@ using SendingEmail.App.Services;
 
 namespace SendingMail.App.Controllers;
 
-public class MailRequest
+public class MailDto
 {
-    public string Email { get; set; } = string.Empty;
-    public string Content { get; set; } = string.Empty;
+    public string Email { get; init;  } = string.Empty;
+    public string Content { get; init; } = string.Empty;
 }
 
 [ApiController]
@@ -21,17 +21,17 @@ public class MailController: ControllerBase
     }
 
     [HttpPost()]
-    public IActionResult SendMail([FromBody] MailRequest mailRequest)
+    public IActionResult SendMail([FromBody] MailDto mailDto)
     { 
         _mailService.SendMail(new Mailer() {
-            Content = mailRequest.Content,
+            Content = mailDto.Content,
             Subject = "Test avec un service",
-            To = mailRequest.Email
+            To = mailDto.Email
         });
 
         return Ok(new
         {
-            message = "Email sent"
+            Message = "Email sent"
         });
     }
 }

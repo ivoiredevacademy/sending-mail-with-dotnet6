@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMailService, MailService>();
+builder.Services.Configure<MailConfig>(builder.Configuration.GetSection("Mail"));
 
 var app = builder.Build();
 
